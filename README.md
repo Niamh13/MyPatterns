@@ -7,7 +7,7 @@ A crochet and kintting pattern application where users can store and share links
 - Yarn Usage Calculator: Estimates the total yarn length needed based off the yarn weight (light, medium, or bulky), main stitch type (single crochet, double crochet, knit, purl), and size of the project (small, meduim, or large)
 
 
-# Back-End Setup
+**Back-End Setup**
 _Create App_
 rails new patterns --api
 cd patterns
