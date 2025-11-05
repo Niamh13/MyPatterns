@@ -1,0 +1,31 @@
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>All Patterns</h1>
+    <%= link_to "Add New Pattern", new_pattern_path, class: "btn btn-success" %>
+  </div>
+
+  <% if @patterns.any? %>
+    <div class="row">
+      <% @patterns.each do |pattern| %>
+        <div class="col-md-4 mb-3">
+          <div class="card shadow-sm h-100">
+            <div class="card-body">
+              <h5 class="card-title"><%= link_to pattern.title, pattern, class: "text-decoration-none" %></h5>
+              <p><strong>Difficulty:</strong> <%= pattern.difficulty %></p>
+              <p><strong>Tags:</strong> <%= pattern.tags %></p>
+              <p><strong>Yarn:</strong> <%= pattern.yarn_weight %></p>
+              <p><strong>Stitch:</strong> <%= pattern.stitch_type %></p>
+            </div>
+            <div class="card-footer text-end">
+              <%= link_to "View", pattern, class: "btn btn-sm btn-outline-primary" %>
+              <%= link_to "Edit", edit_pattern_path(pattern), class: "btn btn-sm btn-outline-secondary" %>
+              <%= button_to "Delete", pattern, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-sm btn-outline-danger" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p>No patterns added yet. <%= link_to "Add one", new_pattern_path %>.</p>
+  <% end %>
+</div>

@@ -1,0 +1,72 @@
+<%= form_with(model: pattern, local: true) do |form| %>
+  <% if pattern.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(pattern.errors.count, "error") %> prohibited this pattern from being saved:</h4>
+      <ul>
+        <% pattern.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :title, class: "form-label" %>
+    <%= form.text_field :title, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :source, class: "form-label" %>
+    <%= form.text_field :source, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :link, class: "form-label" %>
+    <%= form.url_field :link, class: "form-control" %>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <%= form.label :difficulty, class: "form-label" %>
+      <%= form.number_field :difficulty, step: 0.5, class: "form-control", min: 1, max: 5 %>
+    </div>
+    <div class="col-md-4 mb-3">
+      <%= form.label :rating, class: "form-label" %>
+      <%= form.number_field :rating, step: 0.5, class: "form-control", min: 0, max: 5 %>
+    </div>
+    <div class="col-md-4 mb-3">
+      <%= form.label :made, class: "form-label" %>
+      <%= form.number_field :made, class: "form-control", min: 0 %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <%= form.label :yarn_weight, class: "form-label" %>
+      <%= form.select :yarn_weight, Pattern::YARN_WEIGHTS, {}, class: "form-select" %>
+    </div>
+    <div class="col-md-4 mb-3">
+      <%= form.label :stitch_type, class: "form-label" %>
+      <%= form.select :stitch_type, Pattern::STITCH_TYPES, {}, class: "form-select" %>
+    </div>
+    <div class="col-md-4 mb-3">
+      <%= form.label :size, class: "form-label" %>
+      <%= form.select :size, Pattern::SIZES, {}, class: "form-select" %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :tags, "Tags (comma-separated)", class: "form-label" %>
+    <%= form.text_field :tags, class: "form-control", placeholder: "e.g. hat, scarf, beginner" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :notes, class: "form-label" %>
+    <%= form.text_area :notes, class: "form-control", rows: 4 %>
+  </div>
+
+  <div class="text-end">
+    <%= form.submit class: "btn btn-primary px-4" %>
+    <%= link_to "Cancel", patterns_path, class: "btn btn-secondary ms-2" %>
+  </div>
+<% end %>

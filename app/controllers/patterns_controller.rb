@@ -1,26 +1,20 @@
+require "recommendation_system"
+require "yarn_calculator"
+
 class PatternsController < ApplicationController
-  require "recommendation_system"
-  require "yarn_calculator"
-  before_action :set_pattern, only: %i[ show update destroy ]
+  
+  before_action :set_pattern, only: %i[ show edit update destroy ]
 
   # GET /patterns
   def index
     @patterns = Pattern.all.order(created_at: :desc)
-
-    render json: @patterns
   end
 
   # GET /patterns/1
   def show
     @recommendations = RecommendationSystem.similar_patterns(@pattern, Pattern.all)
 
-    @yarn_estimate = YarnCalculator.estimate(
-      @pattern.yarn_weight,
-      @pattern.stitch_type,
-      @pattern.size
-    )
-
-    render json: @pattern
+    @estimate_yarn = @pattern.estimate_yarn
   end
 
   # GET /patterns/new
@@ -35,14 +29,6 @@ class PatternsController < ApplicationController
   def create
     @pattern = Pattern.new(pattern_params)
 
-    if @pattern.yarn_weight.present? && @pattern.stitch_type.present? && @pattern.size.present?
-      @pattern.yarn_estimate = YarnCalculator.estimate(
-        @pattern.yarn_weight,
-        @pattern.stitch_type,
-        @pattern.size
-      )
-    end
-
     if @pattern.save
       redirect_to @pattern, notice: "Pattern was successful created."
     else
@@ -53,18 +39,8 @@ class PatternsController < ApplicationController
   # PATCH/PUT /patterns/1
   def update
     if @pattern.update(pattern_params)
-      if @pattern.saved_change_to_yarn_weight? || @pattern.saved_change_to_yarn_type? || @pattern.saved_change_to_size?
-        @pattern.update(
-          yarn_estimate: YarnCalculator.estimate(
-            @pattern.yarn_weight,
-            @pattern.stitch_type,
-            @pattern.size
-          )
-        )
-      end
-
       redirect_to @pattern, notice: "Pattern was successful updated."
-    else
+    else 
       render :edit, status: :unprocessable_entity
     end
   end

@@ -6,4 +6,77 @@
     <p><strong>Difficulty:</strong> <%= @pattern.difficulty %></p>
     <p><strong>Rating:</strong> <%= @pattern.rating %></p>
     <p><strong>Times Made:</strong> <%= @pattern.made %></p>
+    <p><strong>Tags:</strong> <%= @pattern.tags %></p>
+    <p><strong>Yarn Weight:</strong> <%= @pattern.yarn_weight %></p>
+    <p><strong>Stitch Type:</strong> <%= @pattern.stitch_type %></p>
+    <p><strong>Hook Size:</strong> <%= @pattern.size%></p>
+    <% if @pattern.notes.present? %>
+      <p><strong>Notes:</strong> <%= simple_format(@pattern.notes) %></p>
+    <% end %>
+  </div>
+
+  <div class="d-flex justify-content-between mb-4">
+    <%= link_to "Edit Pattern", edit_pattern_path(@pattern), class: "btn btn-primary" %>
+    <%= link_to "Back to All Patterns", patterns_path, class: "btn btn-secondary" %>
+    <%= button_to "Delete Pattern", @pattern, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-danger" %>
+  </div>
+
+  <hr>
+
+  <h3 class="mb-3">Recommended Patterns</h3>
+  <% if @recommendations.present? && @recommendations.any? %>
+    <div class="row">
+      <% @recommendations.each do |rec| %>
+        <div class="col-md-4">
+          <div class="card mb-3 shadow-sm h-100">
+            <div class="card-body">
+              <h5><%= link_to rec.title, rec, class: "text-decoration-none" %></h5>
+              <p><strong>Difficulty:</strong> <%= rec.difficulty %></p>
+              <p><strong>Tags:</strong> <%= rec.tags %></p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p>No similar patterns found yet.</p>
+  <% end %>
 </div>
+✅ 6. Optional: Add a Shared Partial for the Navbar (app/views/layouts/application.html.erb)
+If you haven’t already, here’s a simple layout with Bootstrap navbar and container.
+
+erb
+Copy code
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PatternPal</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+      <div class="container">
+        <%= link_to "PatternPal", patterns_path, class: "navbar-brand" %>
+        <div>
+          <%= link_to "All Patterns", patterns_path, class: "nav-link d-inline text-white" %>
+          <%= link_to "Add Pattern", new_pattern_path, class: "nav-link d-inline text-white" %>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <% if notice %>
+        <div class="alert alert-success"><%= notice %></div>
+      <% end %>
+      <% if alert %>
+        <div class="alert alert-danger"><%= alert %></div>
+      <% end %>
+
+      <%= yield %>
+    </div>
+  </body>
+</html>
