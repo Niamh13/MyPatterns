@@ -1,13 +1,13 @@
 const apiUrl = "http://127.0.0.1:3000/patterns";
 
 async function loadPatterns(){
-             var response = await fetch(apiUrl,
+             const response = await fetch(apiUrl,
 		     {headers: {
 			     'Content-Type': 'application/json',
 			     'Accept': 'application/json'
 		     }})
              var data = await response.json()
-             console.log(data)
+             console.log("Loaded patterns: ", data)
              var curPat = '<div><table id="cards">'
               for(var i=0; i < data.length; i++){
                 curPat += '<tr><p>'
@@ -34,21 +34,36 @@ async function loadPatterns(){
         }
 
 document.getElementById('newPatternForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.target));
-    const res = await fetch(apiUrl, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+  e.preventDefault();
+  const formData = Object.fromEntries(new FormData(e.target));
+
+  const res = await fetch(apiUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  if (res.ok) {
+    //const newPattern = await res.json();
+    e.target.reset();
+    toggleForm();
+    loadPatterns();
+
+    // Fetch recommendations for that pattern
+    /*const recRes = await fetch(`${apiUrl}/${newPattern.id}/recommendations`, {
+      headers: { Accept: "application/json" },
     });
-    if (res.ok) {
-        e.target.reset();
-        toggleForm();
-        loadPatterns();
-    } else {
-        console.error("Failed to add pattern");
+    if (recRes.ok) {
+      const recommendations = await recRes.json();
+      showRecommendations(recommendations);
     }
-});
+    loadPatterns();
+  } else {
+    const err = await res.json();
+    alert(err.errors ? err.errors.join("\n") : "Failed to create pattern");
+  } */
+}});
+
 
 async function deletePattern(id) {
     if (confirm("Delete this pattern?")) {
@@ -69,6 +84,18 @@ async function editPattern(id) {
     loadPatterns();
 }
 
+/*function showRecommendations(recs) {
+    if (recs.length) {
+        const recSection = document.getElementById('recs');
+        recSection.className = "recommendations";
+        recSection.innerHTML = "<h3>Recommended Patterns</h3>";
+        recs.forEach((r) => {
+            recSection.innerHTML += `<p>${r.title} (Difficulty: ${r.difficulty})</p>`;
+        });
+        document.body.appendChild(recSection);
+    }
+}*/
+
 function toggleForm() {
     document.getElementById("add-new").classList.toggle("hidden");
     document.getElementById("patterns").classList.toggle("hidden");
@@ -83,5 +110,4 @@ document.getElementById("cancelForm").addEventListener("click", () => {
 });
 
 loadPatterns();
-
 

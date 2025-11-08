@@ -9,6 +9,13 @@ Rails.application.routes.draw do
   get '/patterns', to: 'patterns#index'
   post '/patterns/bulkUpload', to: 'patterns#bulkUpload'
 
+
+  #resources :patterns do
+  #  member do
+  #    get :recommendations
+  #  end
+  #end
+
   # Defines the root path route ("/")
   # root "posts#index"
 end

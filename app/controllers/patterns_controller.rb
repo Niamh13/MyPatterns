@@ -13,7 +13,7 @@ class PatternsController < ApplicationController
 
   # GET /patterns/1
   def show
-    @recommendations = RecommendationSystem.similar_patterns(@pattern, Pattern.all)
+    #@recommendations = RecommendationSystem.similar_patterns(@pattern, Pattern.all)
 
     @yarn_estimate = @yarn_estimate = YarnCalculator.estimate(@pattern.yarn_weight, @pattern.stitch_type, @pattern.size)
     render json: { pattern: @pattern, recommendations: @recommendations, yarn_estimate: @yarn_estimate }
@@ -52,6 +52,12 @@ class PatternsController < ApplicationController
     @pattern.destroy!
     render notice: "Pattern was successfully destroyed."
   end
+
+  # GET /patterns/:id/recommendations
+  #def recommendations
+  #  recs = RecommendationSystem.similar_patterns(@pattern, Pattern.all)
+  #  render json: recs.as_json(only: [:id, :title, :difficulty, :tags])
+  #end
 
   private
     # Use callbacks to share common setup or constraints between actions.

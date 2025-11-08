@@ -26,7 +26,7 @@ button {
   margin-right: 8px;
   padding: 6px 12px;
   border: none;
-  background-color: #007bff;
+  background-color: #06ba7e;
   color: white;
   border-radius: 4px;
   cursor: pointer;
@@ -36,24 +36,26 @@ button:hover {
   background-color: #0056b3;
 }
 
+table {
+  display: block;
+  margin: 4%;
+}
+
 #cards {
   border: none;
   text-align: center;
   display: block;
 }
 
-#cards td {
-  text-align: center;
+#cards tr {
+  text-align: left;
   display: block;
   border: 2px solid black;
-  background-color: rgb(62, 62, 62);
+  background-color: rgba(184, 255, 225, 0.55);
+  padding: 10px;
 
 }
 
-#add-new {
-  margin-left: 10px;
-  margin-right: 10px;
-}
 
   </style>
 </head>
@@ -62,6 +64,9 @@ button:hover {
     <div class="header">
       <h2>Welcome to My Patterns</h2>
     </div>
+    <input type=""text" id="searchBox" placeholder="Search by title or tag">
+    <br>
+    <br>
     <button id="toggleForm">Add New Pattern</button>
     <div class="hidden" id="add-new">
       <h4>Add New Pattern</h4>
@@ -75,24 +80,44 @@ button:hover {
         <label for="user_id">User's ID: </label>
         <input type="number" id="user_id" name="user_id" required /><br />
         <label for="rating">Rating (Out of 5): </label>
-        <input type="number" id="rating" name="rating" required /><br />
+        <input type="number" id="rating" name="rating" min="1" max="5" required /><br />
         <label for="difficulty">Difficulty Level (Out of 5): </label>
-        <input type="number" id="difficulty" name="difficulty" required /><br />
+        <input type="number" id="difficulty" name="difficulty" min="1" max="5" required /><br />
         <label for="made">How Many Made? </label>
-        <input type="number" id="made" name="made" /><br />
+        <input type="number" id="made" name="made" min="0" /><br />
         <label for="tags">Tags: </label>
-        <input type="text" id="tags" name="tags" required /><br />
+        <input type="text" id="tags" name="tags" placeholder="e.g. scarf, cozy, winter" required /><br />
         <label for="yarn_weight">Yarn Weight: </label>
-        <input type="text" id="yarn_weight" name="yarn_weight" required /><br />
+        <input type="text" id="yarn_weight" name="yarn_weight" list="yarn-weights" required />
+        <datalist id="yarn-weights">
+          <option value="lace"></option>
+          <option value="light"></option>
+          <option value="medium"></option>
+          <option value="bulky"></option>
+          <option value="super bulky"></option>
+        </datalist><br />
         <label for="stitch_type">Main Stitch Type: </label>
-        <input type="text" id="stitch_type" name="stitch_type" required /><br />
+        <input type="text" id="stitch_type" name="stitch_type" list="stitch-type" required />
+        <datalist id="stitch-type">
+          <option value="single crochet"></option>
+          <option value="double crochet"></option>
+          <option value="half double crochet"></option>
+          <option value="knit"></option>
+          <option value="purl"></option>
+        </datalist><br />
         <label for="size">Project Size: </label>
-        <input type="text" id="size" name="size" required /><br />
+        <input type="text" id="size" name="size" list="size-opt" required />
+        <datalist id="size-opt">
+          <option value="small"></option>
+          <option value="medium"></option>
+          <option value="large"></option>
+        </datalist><br />
         <label for="notes">Notes: </label>
         <input type="text" id="notes" name="notes" /><br /><br />
         <button type="submit">Add Pattern</button>
         <button type="button" id="cancelForm">Cancel</button>
       </form>
+      <!-- <div id="recs"></div> -->
     </div>
     </br>
     <!-- Pattern List -->
