@@ -25,7 +25,13 @@ module YarnCalculator
     BASE_LENGTH = 100
     
     def self.estimate(yarn_weight, stitch_type, size)
-        (BASE_LENGTH * YARN_FACTORS[yarn_weight.downcase] * STITCH_FACTORS[stitch_type.downcase] * SIZE_FACTORS[size.downcase]).round(1)
+        yarn_factor = YARN_FACTORS[yarn_weight.downcase]
+        stitch_factor = STITCH_FACTORS[stitch_type.downcase]
+        size_factor = SIZE_FACTORS[size.downcase]
+
+        return nil if [yarn_factor, stitch_factor, size_factor].any?(&:nil?)
+
+        (BASE_LENGTH * yarn_factor * stitch_factor * size_factor).round(1)
     end
 end
 
