@@ -28,3 +28,4 @@ module YarnCalculator
         (BASE_LENGTH * YARN_FACTORS[yarn_weight.downcase] * STITCH_FACTORS[stitch_type.downcase] * SIZE_FACTORS[size.downcase]).round(1)
     end
 end
+
