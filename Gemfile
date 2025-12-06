@@ -46,4 +46,9 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 end
 
+group :production, :test do
+  gem 'pg'
+end
+
+
 gem "rspec-rails", "~> 8.0", groups: [:development, :test]
