@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # My-Patterns
 Cloud Application Development: CAD Project
 
@@ -30,6 +29,7 @@ end
 _Library_
 recommendation_system.rb
 yarn_calculator.rb
+
 =======
 # My-Patterns
 Cloud Application Development: CAD Project
