@@ -49,14 +49,15 @@ COPY . .
 RUN bundle exec bootsnap precompile app/ lib/
 
 
-
-
 # Final stage for app image
 FROM base
 
 # Copy built artifacts: gems, application
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
+
+# fix permissions for runtime exeutables
+RUN chmod +x rails/bin/thrust /rails/bin/rails
 
 # Run and own only the runtime files as a non-root user for security
 RUN groupadd --system --gid 1000 rails && \
