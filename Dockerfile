@@ -64,10 +64,8 @@ RUN bundle exec rails db:migrate db:seed
 USER 1000:1000
 
 # Entrypoint prepares the database.
-ENTRYPOINT ["/rails/bin/docker-entrypoint"]
+ENTRYPOINT ["bash", "-c", "bundle exec rails db:migrate && bundle exec rails db:seed && exec \"$@\"", "--"]
 
-# Start server via Thruster by default, this can be overwritten at runtime
-EXPOSE 80
-CMD bash -c "bundle exec rails db:migrate && bundle exec rails db:seed && exec ./bin/thrust ./bin/rails server"
+CMD ["./bin/thrust", "./bin/rails", "server"]
 
 
