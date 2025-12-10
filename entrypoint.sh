@@ -1,8 +1,9 @@
 #!/bin/bash
 set -e
 
-# Run migrations
+# Run database migrations and seeds
 bundle exec rails db:migrate
+bundle exec rails db:seed
 
-# Run the command passed to the container
+# Execute the container CMD
 exec "$@"

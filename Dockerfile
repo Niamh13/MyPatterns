@@ -55,6 +55,8 @@ USER 1000:1000
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
 
+# Use the script as entrypoint
 ENTRYPOINT ["entrypoint.sh"]
 
+# Default command to run puma server
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
