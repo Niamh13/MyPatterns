@@ -53,7 +53,7 @@ USER 1000:1000
 
 # Automatically run migrations before boot
 # Copy entrypoint script to app folder and make it executable
-COPY entrypoint.sh /rails/
+COPY scripts/entrypoint.sh /rails/
 RUN chmod +x /rails/entrypoint.sh
 
 ENTRYPOINT ["/rails/entrypoint.sh"]
