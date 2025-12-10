@@ -1,4 +1,3 @@
-
 services:
   - type: web
     name: mypatterns-web
@@ -7,6 +6,7 @@ services:
     branch: main
     autoDeploy: true
     plan: free
+
     envVars:
       - key: RAILS_ENV
         value: production
@@ -15,13 +15,9 @@ services:
           name: mypatterns-db
           property: connectionString
       - key: SECRET_KEY_BASE
-        fromSecret: rails-secret-key-base
-      - key: DB_HOST
-        value: <leave blank if using DATABASE_URL>
-      - key: DB_USER
-        value: <leave blank if using DATABASE_URL>
-      - key: DB_PASSWORD
-        value: <leave blank if using DATABASE_URL>
+        generateValue: true
+      - key: RAILS_MASTER_KEY
+        sync: false   
 
 databases:
   - name: mypatterns-db

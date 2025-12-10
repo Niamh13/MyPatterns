@@ -27,7 +27,7 @@ jobs:
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          # make sure we fail fast
+          
           set -euo pipefail
 
           ssh -o StrictHostKeyChecking=no -i myKey.pem $EC2_USER@${EC2_HOST} << 'EOF'
