@@ -6,6 +6,10 @@ FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 # Rails app lives here
 WORKDIR /rails
 
+# Copy entrypoint script to app folder and make it executable
+COPY scripts/entrypoint.sh /rails/
+RUN chmod +x /rails/entrypoint.sh
+
 # Install base packages
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y curl libjemalloc2 libvips libpq-dev && \
@@ -52,10 +56,6 @@ RUN groupadd --system --gid 1000 rails && \
 USER 1000:1000
 
 # Automatically run migrations before boot
-# Copy entrypoint script to app folder and make it executable
-COPY scripts/entrypoint.sh /rails/
-RUN chmod +x /rails/entrypoint.sh
-
 ENTRYPOINT ["/rails/entrypoint.sh"]
 
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
