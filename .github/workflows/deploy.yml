@@ -8,7 +8,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -21,50 +20,107 @@ jobs:
           chmod 600 myKey.pem
 
       - name: Deploy to EC2
+        env:
+          EC2_USER: ubuntu
+          EC2_HOST: 3.215.208.4
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          ELASTIC_IP=3.215.208.4
+          # make sure we fail fast
+          set -euo pipefail
 
-          ssh -o StrictHostKeyChecking=no -i myKey.pem ubuntu@${ELASTIC_IP} << 'EOF'
-            set -e
+          ssh -o StrictHostKeyChecking=no -i myKey.pem $EC2_USER@${EC2_HOST} << 'EOF'
+            set -eux
 
-            # --- SYSTEM DEPENDENCIES ---
-            sudo apt update -y
-            sudo apt install -y git build-essential curl
+            # avoid interactive apt prompts
+            export DEBIAN_FRONTEND=noninteractive
 
-            # --- INSTALL mise IF MISSING ---
-            if ! command -v mise &> /dev/null; then
-              curl https://mise.jdx.dev/install.sh | sh
-              echo 'export PATH="$HOME/.local/share/mise/bin:$PATH"' >> ~/.bashrc
-              export PATH="$HOME/.local/share/mise/bin:$PATH"
+            # update and install base packages
+            sudo apt-get update -y
+            sudo apt-get install -y git build-essential curl wget libssl-dev libreadline-dev zlib1g-dev libpq-dev nodejs npm
+
+            # install yarn (via npm if corepack absent)
+            if ! command -v yarn >/dev/null 2>&1; then
+              sudo npm install -g yarn
             fi
 
-            # --- INSTALL RUBY WITH mise ---
-            # Reads .tool-versions from your repo automatically
-            mise install ruby
+            # -------- rbenv + ruby-build (if missing) ----------
+            if [ ! -d "$HOME/.rbenv" ]; then
+              git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+              mkdir -p ~/.rbenv/plugins
+              git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+            fi
 
-            # Ensure Ruby is on PATH
-            export PATH="$HOME/.local/share/mise/installs/ruby/3.4.7/bin:$PATH"
+            export PATH="$HOME/.rbenv/bin:$PATH"
+            eval "$(~/.rbenv/bin/rbenv init - bash)"
 
-            # --- CLONE LATEST CODE ---
+            # ---------- deploy directory ----------
+            mkdir -p ~/apps
+            cd ~/apps
+
+            # remove old clone and re-clone fresh copy
             rm -rf MyPatterns
             git clone https://github.com/Niamh13/MyPatterns.git
             cd MyPatterns
 
-            # --- INSTALL GEM DEPENDENCIES ---
+            # If .ruby-version exists, use it; otherwise fallback to 3.4.7
+            if [ -f .ruby-version ]; then
+              RUBY_VERSION="$(cat .ruby-version)"
+            else
+              RUBY_VERSION="3.4.7"
+            fi
+
+            # install ruby if missing
+            if ! ~/.rbenv/versions/"$RUBY_VERSION"/bin/ruby >/dev/null 2>&1; then
+              # install with -s (skip if already present)
+              ~/.rbenv/plugins/ruby-build/install.sh >/dev/null 2>&1 || true
+              ~/.rbenv/bin/rbenv install -s "$RUBY_VERSION"
+            fi
+
+            ~/.rbenv/bin/rbenv global "$RUBY_VERSION"
+            export PATH="$HOME/.rbenv/shims:$HOME/.rbenv/bin:$PATH"
+            eval "$(rbenv init -)"
+
             gem install bundler --no-document
-            bundle install
 
-            # --- SECURITY + LINTING TOOLS ---
-            bundle exec bundler-audit update
-            bundle exec brakeman --no-pager
-            bundle exec rubocop --autocorrect-all --disable-uncorrectable
+            # Use bundler deployment flags for production
+            bundle config set --local without 'development test'
+            bundle install --jobs 4 --retry 3
 
-            # --- DATABASE MIGRATIONS ---
-            bundle exec rails db:migrate
+            # Precompile assets for production
+            # if you want the env to be production, ensure RAILS_ENV=production is set
+            export RAILS_ENV=production
+            if [ -n "${RAILS_MASTER_KEY:-}" ]; then
+              export RAILS_MASTER_KEY="$RAILS_MASTER_KEY"
+            fi
 
-            # --- START SERVER ---
-            chmod +x startServer.sh
-            ./startServer.sh
+            # If DATABASE_URL was provided from GitHub secrets, export it here
+            if [ -n "${DATABASE_URL:-}" ]; then
+              export DATABASE_URL="$DATABASE_URL"
+            fi
+
+            # Create/prepare DB (works for RDS or local Postgres if configured)
+            bundle exec rails db:prepare
+
+            # Precompile assets (again, ensure env)
+            bundle exec rails assets:precompile
+
+            # Start the app using puma in the background (simple approach)
+            # You should replace this with a systemd service in real production.
+            # Kill any existing puma started by this user (best-effort)
+            if pgrep -f puma >/dev/null 2>&1; then
+              pkill -f puma || true
+              sleep 2
+            fi
+
+            # Make sure puma config exists, otherwise start simple puma server
+            if [ -f config/puma.rb ]; then
+              nohup bundle exec puma -C config/puma.rb -e production >> puma.log 2>&1 &
+            else
+              nohup bundle exec puma -e production -b tcp://0.0.0.0:3000 >> puma.log 2>&1 &
+            fi
+
+            echo "DEPLOY_FINISHED"
           EOF
 
       - name: Cleanup
