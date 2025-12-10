@@ -52,11 +52,11 @@ RUN groupadd --system --gid 1000 rails && \
 USER 1000:1000
 
 # Automatically run migrations before boot
-COPY entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
+# Copy entrypoint script to app folder and make it executable
+COPY entrypoint.sh /rails/
+RUN chmod +x /rails/entrypoint.sh
 
-# Use the script as entrypoint
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/rails/entrypoint.sh"]
 
-# Default command to run puma server
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
+
