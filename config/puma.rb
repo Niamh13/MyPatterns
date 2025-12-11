@@ -1,6 +1,9 @@
 threads_count = ENV.fetch("RAILS_MAX_THREADS", 3)
 threads threads_count, threads_count
 
+workers ENV.fetch("WEB_CONCURRENCY", 1)
+
+
 port ENV.fetch("PORT", 3000)
 
 # Required for Render
