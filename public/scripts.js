@@ -1,4 +1,4 @@
-const apiUrl = "http://127.0.0.1:3000/patterns";
+const apiUrl = "https://mypatterns.onrender.com/patterns";
 
 // Load patterns, optionally filtered by search term
 async function loadPatterns(searchTerm = "") {
