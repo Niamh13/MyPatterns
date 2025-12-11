@@ -13,20 +13,14 @@ test:
 
 production:
   url: <%= ENV['DATABASE_URL'] %>
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-# Solid Cache (Rails 8)
 cache:
-  adapter: postgresql
   url: <%= ENV['DATABASE_URL'] %>
 
-# Solid Queue (Rails 8)
 queue:
-  adapter: postgresql
   url: <%= ENV['DATABASE_URL'] %>
 
-# ActionCable (optional)
 cable:
   adapter: postgresql
   url: <%= ENV['DATABASE_URL'] %>
-  pool: 5
+
