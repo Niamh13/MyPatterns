@@ -5,5 +5,4 @@ set -e
 bundle exec rails db:migrate
 
 # Execute the container CMD
-echo "start server"
 exec "$@"
