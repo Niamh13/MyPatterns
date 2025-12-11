@@ -2,9 +2,6 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
-  username: <%= ENV.fetch("DB_USER") { "postgres" } %>
-  password: <%= ENV.fetch("DB_PASSWORD") { "password" } %>
 
 development:
   <<: *default
@@ -16,15 +13,20 @@ test:
 
 production:
   url: <%= ENV['DATABASE_URL'] %>
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
+# Solid Cache (Rails 8)
+cache:
+  adapter: postgresql
+  url: <%= ENV['DATABASE_URL'] %>
 
+# Solid Queue (Rails 8)
 queue:
-  <<: *default
-  database: myapp_queue_production
+  adapter: postgresql
+  url: <%= ENV['DATABASE_URL'] %>
 
+# ActionCable (optional)
 cable:
   adapter: postgresql
-  encoding: unicode
-  pool: 5
   url: <%= ENV['DATABASE_URL'] %>
+  pool: 5
