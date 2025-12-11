@@ -1,5 +1,6 @@
 const apiUrl = "https://mypatterns.onrender.com/patterns";
 
+
 // Load patterns, optionally filtered by search term
 async function loadPatterns(searchTerm = "") {
   console.log("loadPatterns called with searchTerm:", searchTerm);
