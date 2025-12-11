@@ -4,8 +4,6 @@ threads threads_count, threads_count
 workers ENV.fetch("WEB_CONCURRENCY", 1)
 
 
-port ENV.fetch("PORT", 3000)
-
 # Required for Render
 bind "tcp://0.0.0.0:#{ENV.fetch("PORT", 3000)}"
 
